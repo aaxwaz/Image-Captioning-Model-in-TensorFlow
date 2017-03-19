@@ -20,7 +20,7 @@ In addition, there are some other differences such as:
 
     python prepare_captions.py --file_dir /home/ubuntu/COCO/dataset/COCO_captioning/ --total_vocab 2000 --padding_len 25
 
-3. Run command line below to extract features using Inception V3 pretrained model, and save them to train2014_v3_pool_3.npy and val2014_v3_pool_3.npy
+3. Run command lines below to extract features using Inception V3 pretrained model, and save them to train2014_v3_pool_3.npy and val2014_v3_pool_3.npy
 
     python extract_features.py --model_dir /tmp/imagenet --image_dir /home/ubuntu/COCO/dataset/train2014 --save_dir     /home/ubuntu/COCO/dataset/COCO_captioning/train2014_v3_pool_3 
 

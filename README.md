@@ -1,10 +1,11 @@
-# Image-Captioning-Model-in-TensorFlow
+# Image Captioning Model in TensorFlow
 
 This repo contains Image Captioning model implemented using TensorFlow. The model trains on MSCOCO data set which is downloadable from link: 
 http://mscoco.org/dataset/#download
 
 The model is a simplified version of Google's ShowAndTell model: https://github.com/tensorflow/models/tree/master/im2txt#prepare-the-training-data
-Basically, the model will extract all image features and save into numpy array to local first, and then build the LSTM to train on the features. However, this turned out to be more time saving (at the cost of some accuracy, as we are not fine tuning the image model while training LSTM as Google did.)
+
+Basically, the model will extract all image features and save in numpy arrays to local first, and then build the LSTM to train on those features. However, this turned out to be time saving (at the cost of some accuracy, as we are not fine tuning the image model while training LSTM as Google did.)
 
 In addition, there are some other differences such as: 
 1. Using greedy Sampling to generate caption instead of Google's beam search. 

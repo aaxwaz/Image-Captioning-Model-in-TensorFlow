@@ -77,9 +77,9 @@ def build_model(config, mode, inference_batch = None, glove_vocab = None):
     
     ### Builds the input sequence embeddings ###
     # Inputs:
-    #   self.input_seqs
+    #   input_seqs
     # Outputs:
-    #   self.seq_embeddings
+    #   seq_embedding
     ############################################
 
     with tf.variable_scope("seq_embedding"), tf.device("/cpu:0"):
@@ -97,14 +97,12 @@ def build_model(config, mode, inference_batch = None, glove_vocab = None):
 
     ############ Builds the model ##############
     # Inputs:
-    #   self.image_feature
-    #   self.seq_embeddings
-    #   self.target_seqs (training and eval only)
-    #   self.input_mask (training and eval only)
+    #   image_feature
+    #   seq_embedding
+    #   target_seqs 
+    #   input_mask 
     # Outputs:
-    #   self.total_loss (training and eval only)
-    #   self.target_cross_entropy_losses (training and eval only)
-    #   self.target_cross_entropy_loss_weights (training and eval only)
+    #   total_loss 
     ############################################
 
     lstm_cell = tf.nn.rnn_cell.LSTMCell(
@@ -156,9 +154,8 @@ def build_model(config, mode, inference_batch = None, glove_vocab = None):
         
         logits = tf.matmul(lstm_outputs, W) + b # logits: [batch_size * padded_length, config.vocab_size]
           
-    ###### for inference only - greedy sample #######
+    ###### for inference only - Greedy Sampling approach #######
     preds = tf.argmax(logits, 1)
-    ###### for inference only #######################
     
     # for training only below 
     targets = tf.reshape(target_seqs, [-1])
@@ -172,9 +169,6 @@ def build_model(config, mode, inference_batch = None, glove_vocab = None):
                         name="batch_loss")
     tf.contrib.losses.add_loss(batch_loss)
     total_loss = tf.contrib.losses.get_total_loss()
-    
-    # target_cross_entropy_losses = losses  # Used in evaluation.
-    # target_cross_entropy_loss_weights = weights  # Used in evaluation.
 
     return dict(
         total_loss = total_loss, 

@@ -34,7 +34,7 @@ In addition, there are some other differences such as:
 ```shell
     python train.py -–savedSession_dir [dir where your sessions will be saved] –-data_dir [dir where all training data are saved, which was generated in step 2] –-glove_vocab [path to GloVe word vectors, none if not needed] --sample_dir [dir to save all intermediate validation sample images during training] –-print_every [num of steps to print training loss. 0 for not printing] –-sample_every [num of steps to generate captions on validation images. 0 for not sampling] –-saveModel_every [num of steps to save the model checkpoint. 0 for not saving.]
 ```
-5. Inference on test data folder
+5. Inference on test data folder - using beam search
 ```shell
-    python inference_on_folder.py –-pretrain_dir [path to pretrained v3 model; if not found, will download from web] –-test_dir [path to dir of test images you want to inference on] –-results_dir [path to dir where the test results will be saved] –-saved_sess [saved check point] –-dict_file [path to dictionary file generated in step 2, e.g. coco2014_vocab.json]
+    python inference_on_folder_beam.py –-pretrain_dir [path to pretrained v3 model; if not found, will download from web] –-test_dir [path to dir of test images you want to inference on] –-results_dir [path to dir where the test results will be saved] –-saved_sess [saved check point] –-dict_file [path to dictionary file generated in step 2, e.g. coco2014_vocab.json]
 ```

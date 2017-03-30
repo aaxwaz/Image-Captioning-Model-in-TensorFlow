@@ -1,4 +1,6 @@
-"""Class for generating captions from an image-to-text model."""
+"""Class for generating captions from an image-to-text model.
+   This is based on Google's https://github.com/tensorflow/models/blob/master/im2txt/im2txt/inference_utils/caption_generator.py
+"""
 
 from __future__ import absolute_import
 from __future__ import division
@@ -123,7 +125,6 @@ class CaptionGenerator(object):
                  self.model['keep_prob']: 1.0}
     state = sess.run(self.model['initial_state'], feed_dict=feed_dict)
     return state
-    ## TO DO ##
     
   def _inference_step(self, sess, input_feed_list, state_feed_list, max_caption_length):
   
@@ -142,7 +143,6 @@ class CaptionGenerator(object):
         new_state_outputs.append(new_state)
         
     return softmax_outputs, new_state_outputs, None
-    ## TO DO ##
 
   def beam_search(self, sess, feature):
     """Runs beam search caption generation on a single image.
@@ -166,7 +166,7 @@ class CaptionGenerator(object):
     complete_captions = TopN(self.beam_size)
 
     # Run beam search.
-    for test in range(self.max_caption_length - 1):
+    for _ in range(self.max_caption_length - 1):
       partial_captions_list = partial_captions.extract()
       partial_captions.reset()
       input_feed = [np.array([c.sentence[-1]]).reshape(1, 1) for c in partial_captions_list]

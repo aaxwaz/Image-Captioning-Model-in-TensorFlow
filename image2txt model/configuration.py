@@ -21,8 +21,8 @@ class ModelConfig(object):
 
     # LSTM input and output dimensionality, respectively.
     self.image_feature_size = 2048  # equal to output layer size from inception v3
-    self.num_lstm_units = 300
-    self.embedding_size = 300
+    self.num_lstm_units = 512
+    self.embedding_size = 512
 
     # If < 1.0, the dropout keep probability applied to LSTM variables.
     self.lstm_dropout_keep_prob = 0.7

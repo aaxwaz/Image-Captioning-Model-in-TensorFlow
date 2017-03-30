@@ -1,5 +1,5 @@
 
-"""Predict captions on test images using trained model"""
+"""Predict captions on test images using trained model, with beam search method"""
 
 from __future__ import absolute_import
 from __future__ import division
@@ -22,6 +22,7 @@ import sys
 import tarfile
 import json
 import argparse
+from caption_generator import * 
 
 model_config = configuration.ModelConfig()
 training_config = configuration.TrainingConfig()
@@ -102,37 +103,19 @@ def extract_features(image_dir):
     return final_array, all_image_names
 
 
-def step_inference(sess, features, model, keep_prob):
+def run_inference(sess, features, generator, keep_prob):
 
     batch_size = features.shape[0]
-    
-    captions_in = np.ones((batch_size, 1)) # <START> token index is one
-    
-    state = None 
+
     final_preds = []
-    current_pred = captions_in
-    mask = np.zeros((batch_size, model_config.padded_length))
-    mask[:, 0] = 1
-    
-    # get initial state using image feature 
-    feed_dict = {model['image_feature']: features, 
-                 model['keep_prob']: keep_prob}
-    state = sess.run(model['initial_state'], feed_dict=feed_dict)
-    
-    # start to generate sentences
-    for t in range(model_config.padded_length):
-        feed_dict={model['input_seqs']: current_pred, 
-                   model['initial_state']: state, 
-                   model['input_mask']: mask, 
-                   model['keep_prob']: keep_prob}
-            
-        current_pred, state = sess.run([model['preds'], model['final_state']], feed_dict=feed_dict)
+
+    for i in range(batch_size):
+        feature = features[i].reshape(1, -1)
+        pred = generator.beam_search(sess, feature)
+        pred = pred[0].sentence
+        final_preds.append(np.array(pred))
         
-        current_pred = current_pred.reshape(-1, 1)
-        
-        final_preds.append(current_pred)
-        
-    return final_preds    
+    return final_preds
 
 def main(_):
     
@@ -154,7 +137,10 @@ def main(_):
         print("Inferencing on {} images".format(num_of_images))
         
         # Build the model.
-        model = build_model(model_config, mode, inference_batch = num_of_images)
+        model = build_model(model_config, mode, inference_batch = 1)
+        
+        # Initialize beam search Caption Generator 
+        generator = CaptionGenerator(model, data['word_to_idx'], max_caption_length = model_config.padded_length-1)
         
         # run training 
         init = tf.global_variables_initializer()
@@ -167,11 +153,14 @@ def main(_):
             print("Model restored! Last step run: ", sess.run(model['global_step']))
             
             # predictions 
-            final_preds = step_inference(sess, features, model, 1.0)
-
+            final_preds = run_inference(sess, features, generator, 1.0)
             captions_pred = [unpack.reshape(-1, 1) for unpack in final_preds]
-            captions_pred = np.concatenate(captions_pred, 1)
-            captions_deco = decode_captions(captions_pred, data['idx_to_word'])
+            #captions_pred = np.concatenate(captions_pred, 1)
+            captions_deco= []
+            for cap in captions_pred:
+                dec = decode_captions(cap.reshape(-1, 1), data['idx_to_word'])
+                dec = ' '.join(dec)
+                captions_deco.append(dec)
             
             # saved the images with captions written on them
             if not os.path.exists(FLAGS.results_dir):

@@ -24,9 +24,9 @@ FLAGS = None
 savedModelName = 'model1.0.ckpt'
 mode = 'train'
 
-def _step_val(sess, data, batch_size, model, keep_prob):
+def _run_validation(sess, data, batch_size, model, keep_prob):
     """
-    Sample batch_size images from validation set, and predict the captions for each image. 
+    Make a single gradient update for batch data. 
     """
     # Make a minibatch of training data
     minibatch = sample_coco_minibatch(data,
@@ -64,7 +64,7 @@ def _step_val(sess, data, batch_size, model, keep_prob):
 
 def _step(sess, data, train_op, model, keep_prob):
     """
-    Make a single gradient update for batch data, and return the loss. 
+    Make a single gradient update for batch data. 
     """
     # Make a minibatch of training data
     minibatch = sample_coco_minibatch(data,
@@ -89,6 +89,9 @@ def _step(sess, data, train_op, model, keep_prob):
 def main(_):
     # load data 
     data = load_coco_data(FLAGS.data_dir)
+    
+    # force padded_length equal to padded_length - 1
+    # model_config.padded_length = len(data['train_captions'][0]) - 1
 
     # Build the TensorFlow graph and train it
     g = tf.Graph()
@@ -166,7 +169,7 @@ def main(_):
                     temp_dir = os.path.join(FLAGS.sample_dir, 'temp_dir_{}//'.format(t+1))
                     if not os.path.exists(temp_dir):
                         os.makedirs(temp_dir)
-                    captions_pred, urls = _step_val(sess, data, model_config.batch_size, model, 1.0) # the output is size (32, 16)
+                    captions_pred, urls = _run_validation(sess, data, model_config.batch_size, model, 1.0) # the output is size (32, 16)
                     captions_pred = [unpack.reshape(-1, 1) for unpack in captions_pred]
                     captions_pred = np.concatenate(captions_pred, 1)
                     

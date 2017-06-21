@@ -8,13 +8,12 @@ http://mscoco.org/dataset/#download
 
 The model is a simplified version of Google's ShowAndTell model: https://github.com/tensorflow/models/tree/master/im2txt#prepare-the-training-data
 
-Basically, the model will extract all image features and save in numpy arrays to local first, and then build the LSTM to train on those features. However, this turned out to be time saving (at the cost of some accuracy, as we are not fine tuning the image model while training LSTM as Google did.)
+Basically, the model will extract all image features and save in numpy arrays to local first, and then build the LSTM to train on those features. However, this turned out to be time saving (at the cost of some accuracy, as we are not fine tuning the image model, the encoder, while training LSTM as opposed to Google's approach)
 
 In addition, there are some other differences such as: 
-1. Using greedy Sampling to generate caption instead of Google's beam search. 
-2. Not using emsembling. 
-3. Not using partially guided training 
-4. Not using BLEU score to monitor validation 
+1. Not using emsembling. 
+2. Not using partially guided training 
+3. Not using BLEU score to monitor validation 
 
 ## How to run the scripts
 

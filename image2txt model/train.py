@@ -93,6 +93,8 @@ def main(_):
     # force padded_length equal to padded_length - 1
     # model_config.padded_length = len(data['train_captions'][0]) - 1
 
+    tf.reset_default_graph()
+    
     # Build the TensorFlow graph and train it
     g = tf.Graph()
     with g.as_default():
